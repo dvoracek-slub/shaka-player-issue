@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <script src="https://ajax.googleapis.com/ajax/libs/shaka-player/3.2.2/shaka-player.compiled.js"></script>
+  </head>
+  <body>
+    <video controls></video>
+
+    <script>
+      (async function () {
+        shaka.polyfill.installAll();
+
+        const video = document.querySelector("video");
+        const player = new shaka.Player(video);
+        await player.load(
+          "https://raw.githubusercontent.com/dvoracek-slub/shaka-player-issue/main/hls/video.m3u8"
+        );
+
+        console.log(player.getConfiguration());
+
+        const imgTrack = player.getImageTracks()[0];
+        const thumb = await player.getThumbnails(imgTrack.id, 4);
+
+        // (1a) Expected: 80, 45
+        //      Actual: null, null
+        console.log(imgTrack.width, imgTrack.height);
+
+        // (1b) Expected: 2880
+        //      Actual: 0
+        console.log(imgTrack.bandwidth);
+
+        // (2) Expected: 80, 0
+        //     Actual: 0, 0
+        console.log(thumb.positionX, thumb.positionY);
+
+        // (3a) Expected: 4
+        //      Actual: 3.72333
+        console.log(thumb.startTime);
+
+        // (3b) Expected: 4
+        //      Actual: 3.72333
+        console.log(thumb.duration);
+      })();
+    </script>
+  </body>
+</html>
