@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <script src="https://ajax.googleapis.com/ajax/libs/shaka-player/3.2.2/shaka-player.compiled.js"></script>
+  </head>
+  <body>
+    <video controls></video>
+
+    <script>
+      (async function () {
+        shaka.polyfill.installAll();
+
+        const video = document.querySelector("video");
+        const player = new shaka.Player(video);
+
+        await player.load(
+          "https://raw.githubusercontent.com/dvoracek-slub/shaka-player-issue/main/image-stream-dedup/video.mpd"
+        );
+
+        const imageTracks = player.getImageTracks();
+
+        // Expected: 4
+        // Actual: 1
+        console.log(imageTracks.length);
+      })();
+    </script>
+  </body>
+</html>
